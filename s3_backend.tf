@@ -1,7 +1,8 @@
 terraform {
   backend "s3" {
-    bucket = "jltuts"
-    key    = "tfstate"
-    region = "us-east-1"
+    bucket  = "jltuts"
+    key     = "tfstate/terraform.tfstate"
+    region  = "us-east-1"
+    profile = "jltuts"
   }
 }
