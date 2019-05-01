@@ -14,7 +14,7 @@ resource "aws_vpc" "vpc" {
 resource "aws_subnet" "public_subnet_1" {
   vpc_id                    = "${aws_vpc.vpc.id}"
   availability_zone         = "${var.az1}"
-  cidr_block                = "${var.cidr_block}"
+  cidr_block                = "${var.cidr_block_public_1}"
 
   tags = "${merge(map("Name", "sbt-${lower("${var.client_name}-${var.environment_name}")}-public-1"), local.resource_tags)}"
 
@@ -26,7 +26,7 @@ resource "aws_subnet" "public_subnet_1" {
 resource "aws_subnet" "public_subnet_2" {
   vpc_id                    = "${aws_vpc.vpc.id}"
   availability_zone         = "${var.az2}"
-  cidr_block                = "${var.cidr_block}"
+  cidr_block                = "${var.cidr_block_public_2}"
 
   tags = "${merge(map("Name", "sbt-${lower("${var.client_name}-${var.environment_name}")}-public-2"), local.resource_tags)}"
 
@@ -39,7 +39,7 @@ resource "aws_subnet" "public_subnet_2" {
 resource "aws_subnet" "private_subnet_1" {
   vpc_id                    = "${aws_vpc.vpc.id}"
   availability_zone         = "${var.az1}"
-  cidr_block                = "${var.cidr_block}"
+  cidr_block                = "${var.cidr_block_private_1}"
 
   tags = "${merge(map("Name", "sbt-${lower("${var.client_name}-${var.environment_name}")}-private-1"), local.resource_tags)}"
 
@@ -51,7 +51,7 @@ resource "aws_subnet" "private_subnet_1" {
 resource "aws_subnet" "private_subnet_2" {
   vpc_id                    = "${aws_vpc.vpc.id}"
   availability_zone         = "${var.az2}"
-  cidr_block                = "${var.cidr_block}"
+  cidr_block                = "${var.cidr_block_private_2}"
 
   tags = "${merge(map("Name", "sbt-${lower("${var.client_name}-${var.environment_name}")}-private-2"), local.resource_tags)}"
 
@@ -147,7 +147,7 @@ resource "aws_route_table" "private-2" {
 # ---------------------------------------------------------------------------------------------------------------------
 
 # Public Route Table Association
-resource "aws_route_table_association" "public" {
+resource "aws_route_table_association" "public-1" {
   subnet_id      = "${aws_subnet.public_subnet_1.id}"
   route_table_id = "${aws_route_table.public.id}"
 
@@ -156,8 +156,19 @@ resource "aws_route_table_association" "public" {
   }
 }
 
+resource "aws_route_table_association" "public-2" {
+  subnet_id      = "${aws_subnet.public_subnet_2.id}"
+  route_table_id = "${aws_route_table.public.id}"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+
+# Private Route Table Association
 resource "aws_route_table_association" "private-1" {
-  subnet_id      = "${aws_subnet.public_subnet_1.id}"
+  subnet_id      = "${aws_subnet.private_subnet_1.id}"
   route_table_id = "${aws_route_table.private-1.id}"
 
   lifecycle {
@@ -166,7 +177,7 @@ resource "aws_route_table_association" "private-1" {
 }
 
 resource "aws_route_table_association" "private-2" {
-  subnet_id      = "${aws_subnet.public_subnet_2.id}"
+  subnet_id      = "${aws_subnet.private_subnet_2.id}"
   route_table_id = "${aws_route_table.private-2.id}"
 
   lifecycle {
