@@ -25,3 +25,4 @@ locals {
     Purpose     = "${var.purpose}"
     Creator     = "${var.creator}"
   }
+}
